@@ -45,7 +45,7 @@ YES "$HOME/Library/Preferences/com.apple.symbolichotkeys.plist"
 
 Cmd+Q는 일반 종료 요청입니다. 강제 종료 단축키로 표현하지 않았습니다. Amphetamine이나 장시간 플레이가 반드시 필요한 재현 조건이라고 확인한 것은 아닙니다.
 
-## 이번 공개 준비에서 확인한 것
+## 검증 범위
 
 2026-09-15 환경은 macOS 26.6.1 (25G76), arm64입니다. 이전 장애 관찰 당시 macOS 15.7.7과 구분합니다.
 
@@ -56,6 +56,15 @@ Cmd+Q는 일반 종료 요청입니다. 강제 종료 단축키로 표현하지 
 - 이 시점에는 해당 장애 프로세스가 실행 중이지 않았습니다.
 - 공개용 도구의 실제 종료 동작은 모의 프로세스 검사로 확인했습니다. 최신 게임 클라이언트를 새로 실행해 장애를 재현하지 않았습니다.
 
+공개 스크립트는 Bash 문법 검사, 모의 프로세스 회귀 검사, 실제 대상이 없는 상태의 검사 및 실행을 통과했습니다. 로컬 검사는 아래 명령으로 실행합니다.
+
+```bash
+/bin/bash -n kill-maplestory-hotkey-loop.command
+/bin/bash test-hotkey-loop.sh
+```
+
+게임 업데이트로 파일 경로나 프로세스 구조가 바뀌면 자동 판별이 작동하지 않을 수 있습니다. 설치된 클라이언트가 최신인지, 서버 측 수정이 배포됐는지는 확인하지 않았습니다.
+
 재확인한 설치 파일의 SHA-256:
 
 ```text
@@ -64,6 +73,38 @@ set_hotkeys
 ```
 
 이 해시는 관찰한 파일을 구분하기 위한 값이며, 공식 배포본의 진위나 최신 버전을 보증하지 않습니다. 게임 스크립트 전체는 저장소에 포함하지 않습니다.
+
+## 스크립트 동작
+
+현재 사용자가 소유한 아래 세 프로세스의 부모 관계와 실행 경로를 확인합니다.
+
+```text
+/bin/bash .../MapleStory.app/.../bin/set_hotkeys
+  -> /bin/bash $HOME/Library/Application Support/MapleStory/.hotkey-cache.sh
+     -> YES $HOME/Library/Preferences/com.apple.symbolichotkeys.plist
+```
+
+각 프로세스의 PID, 시작 시각, 사용자, 실행 명령을 다시 확인한 뒤 위 세 프로세스에만 `SIGKILL`을 보냅니다. 복구 스크립트가 다음 줄로 진행하지 않도록 셸 두 개부터 종료합니다. 같은 프로세스 그룹 전체를 종료하지 않습니다.
+
+이름이 `YES`라는 이유만으로 종료하지 않으며, 부모 관계가 끊겼거나 설치 경로가 다르면 건너뜁니다. macOS 기본 Bash를 사용하고 관리자 권한, 상주 작업, 네트워크 통신이 필요 없습니다.
+
+## 터미널에서 실행
+
+바탕화면에 둔 스크립트를 직접 실행하려면:
+
+```bash
+/bin/bash "$HOME/Desktop/kill-maplestory-hotkey-loop.command"
+```
+
+종료하지 않고 검사만 하려면:
+
+```bash
+/bin/bash "$HOME/Desktop/kill-maplestory-hotkey-loop.command" --check
+```
+
+`Users/...`로 시작하는 경로에는 앞의 `/`가 빠져 있습니다. 위처럼 `$HOME`을 사용하면 계정명을 직접 적을 필요가 없습니다. 완료 문장은 `Done. No matching MapleStory hotkey CPU loop is running.`이며, 터미널 창은 설정에 따라 남을 수 있습니다.
+
+종료 코드 `0`은 검사/처리 성공, `1`은 미확인 또는 남은 대상/실패, `2`는 사용법/실행 환경 오류입니다. `--check`에서는 대상을 찾아도 검사에 성공하면 `0`입니다.
 
 ## 대응 범위
 
