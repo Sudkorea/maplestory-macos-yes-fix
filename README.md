@@ -1,10 +1,20 @@
 # 메이플스토리 YES 정리
 
+<img src="docs/maplestory-macbook-heat.png" width="840" alt="메이플스토리가 켜진 맥북, CPU 100% 표시와 붉은 열기. 증상을 설명하는 AI 생성 일러스트.">
+
 맥북에서 메이플스토리를 껐는데도 발열이 계속될 때, CPU를 쓰는 `YES` 프로세스를 찾아 종료합니다.
 
 **[macOS용 다운로드](https://github.com/Sudkorea/maplestory-macos-yes-fix/releases/latest/download/maplestory-hotkey-cleanup.zip)**
 
-게임 파일과 설정 파일은 수정하지 않습니다.
+게임 파일과 설정 파일은 수정하지 않습니다. [실행 전 코드 설명 보기](docs/script-guide.md)
+
+## 뭐가 문제인가
+
+메이플은 게임 조작과 겹치지 않도록 **맥의 단축키를 잠시 바꿉니다.**
+
+그런데 게임을 끈 뒤 원래대로 되돌리는 과정에 오류가 생기면, `YES`라는 작업이 끝없이 돌아가는 경우가 있습니다.
+
+**게임은 꺼졌는데 맥북은 계속 일하니 뜨거운 겁니다.** 이 도구는 그 작업을 찾아 끕니다.
 
 ## 사용 방법
 
