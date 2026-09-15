@@ -4,7 +4,7 @@
 
 매번 찾아서 끄기 번거로워서 더블클릭하면 정리되는 스크립트를 만들었다. **게임 파일이나 설정 파일은 건드리지 않는다.**
 
-**[GitHub에서 다운로드](https://github.com/Sudkorea/maplestory-macos-yes-fix#readme)**
+**[GitHub에서 다운로드](https://github.com/Sudkorea/maplestory-macos-yes-fix#readme-ov-file)**
 
 ## 사용 방법
 
